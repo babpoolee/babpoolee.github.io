@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>카페#001 · 메뉴판</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --espresso:#241812; --roast:#3a281e; --ink:#2b1d14; --muted:#7b6858;
+  --paper:#f3ecdf; --card:#fdfaf4; --line:#dccfbc; --foam:#f8f1e4;
+  --butter:#e3ad3f; --berry:#8f2e44; --leaf:#3f6b4f;
+  --serif:"Gowun Batang",serif; --sans:"IBM Plex Sans KR",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--butter);outline-offset:2px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+
+/* ── 간판 ── */
+.sign{background:var(--espresso) url(cafe-bg.webp) center 62%/cover no-repeat;color:var(--foam);border-bottom:4px double var(--butter);position:relative;isolation:isolate}
+.sign::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(28,18,13,.93) 0%,rgba(28,18,13,.8) 42%,rgba(28,18,13,.38) 100%)}
+.sign .txt{flex:1;min-width:0;text-shadow:0 1px 10px rgba(20,12,8,.7)}
+.side{display:flex;align-items:flex-end;gap:22px}
+.me{flex:none;width:230px;margin:0;background:#fff;padding:6px 6px 0;border-radius:4px;box-shadow:0 10px 28px rgba(0,0,0,.45);transform:rotate(2.5deg)}
+.me img{display:block;width:100%;height:auto;aspect-ratio:1;image-rendering:pixelated}
+.me figcaption{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);text-align:center;padding:5px 0 6px}
+.sign .wrap{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding-top:44px;padding-bottom:38px;min-height:250px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--butter);text-transform:uppercase}
+.sign h1{font-family:var(--serif);font-weight:700;font-size:clamp(34px,6vw,56px);line-height:1.1;margin:10px 0 8px;letter-spacing:-.01em;text-wrap:balance}
+.sign p{margin:0;color:#e6dccd;max-width:60ch;white-space:pre-line}
+.tab-btn{flex:none;display:flex;align-items:center;gap:10px;background:rgba(28,18,13,.72);border:1px solid #a08a76;color:var(--foam);padding:11px 16px;border-radius:4px;font-weight:500}
+.tab-btn:hover{border-color:var(--butter)}
+.tab-btn b{font-family:var(--mono);background:var(--butter);color:var(--espresso);min-width:24px;padding:1px 6px;border-radius:3px;text-align:center}
+
+/* ── 사장님 바 ── */
+.owner{background:var(--butter);color:var(--espresso);font-size:14px}
+.owner .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding-top:9px;padding-bottom:9px}
+.owner strong{margin-right:auto}
+.owner button{background:var(--espresso);color:var(--foam);border:0;padding:7px 12px;border-radius:4px;font-weight:500}
+.owner button.ghost{background:transparent;color:var(--espresso);border:1px solid var(--espresso)}
+
+/* ── 본문 레이아웃 ── */
+.layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:36px;padding-top:30px;padding-bottom:70px;align-items:start}
+.index{position:sticky;top:18px;max-height:calc(100vh - 36px);overflow:auto;padding-right:4px}
+.index h2{font-family:var(--serif);font-size:17px;margin:20px 0 6px;padding-bottom:6px;border-bottom:1px solid var(--ink);display:flex}
+.index h2:first-of-type{margin-top:14px}
+.index button{display:flex;width:100%;align-items:baseline;gap:8px;background:none;border:0;padding:6px 8px;border-radius:4px;text-align:left;color:var(--ink)}
+.index button:hover{background:#eadfcd}
+.index button[aria-current=true]{background:var(--espresso);color:var(--foam)}
+.index button span{margin-left:auto;font-family:var(--mono);font-size:12px;opacity:.65}
+.index button.all{font-weight:600}
+.index h2 button{padding:2px 8px;margin:-2px -8px;font:inherit}
+
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:8px}
+.search{flex:1 1 220px;display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:0 12px}
+.search:focus-within{border-color:var(--ink)}
+.search input{flex:1;border:0;background:none;padding:10px 0;outline:none;min-width:0}
+.seg{display:flex;border:1px solid var(--line);border-radius:4px;overflow:hidden;background:var(--card)}
+.seg button{border:0;background:none;padding:9px 13px;border-right:1px solid var(--line);white-space:nowrap}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed=true]{background:var(--espresso);color:var(--foam)}
+select{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:9px 10px}
+.count{display:flex;align-items:baseline;gap:10px;margin:18px 0 14px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.count h2{font-family:var(--serif);font-size:24px;margin:0}
+.count span{font-family:var(--mono);font-size:13px;color:var(--muted)}
+
+/* ── 메뉴 카드 ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px}
+.card{position:relative;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:6px;overflow:hidden;transition:border-color .15s,transform .15s}
+.card:hover{border-color:var(--ink);transform:translateY(-2px)}
+.pic{position:relative;aspect-ratio:1;background:var(--foam);border-bottom:1px solid var(--line);display:grid;place-items:center}
+.pic img{width:100%;height:100%;object-fit:contain;padding:10px}
+.pic .cup{width:44%;opacity:.35}
+.stamp{position:absolute;inset:auto auto 10px 10px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;padding:3px 7px;border:1.5px solid currentColor;border-radius:3px;background:var(--card);transform:rotate(-4deg)}
+.stamp.out{color:var(--berry)} .stamp.hold{color:#9a6a12}
+.card.out .pic img{filter:grayscale(1);opacity:.45}
+.info{padding:12px 14px 10px;display:flex;flex-direction:column;gap:4px;flex:1}
+.cats{font-size:12px;color:var(--muted);letter-spacing:.02em}
+.card h3{margin:0;font-size:15.5px;font-weight:600;line-height:1.35;word-break:keep-all;overflow-wrap:anywhere}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.pricerow{display:flex;align-items:baseline;gap:8px;margin-top:auto;padding-top:8px}
+.pricerow i{flex:1;border-bottom:1.5px dotted #b9a892;transform:translateY(-4px)}
+.price{font-family:var(--mono);font-weight:600;font-size:19px;color:var(--ink)}
+.price small{font-family:var(--sans);font-size:12px;font-weight:500;color:var(--muted);margin-left:3px}
+.card.out .price{text-decoration:line-through;color:var(--muted)}
+.act{display:flex;border-top:1px solid var(--line)}
+.act button{flex:1;border:0;background:none;padding:10px;font-weight:500;font-size:14px}
+.act button+button{border-left:1px solid var(--line)}
+.act button:hover:not(:disabled){background:var(--espresso);color:var(--foam)}
+.act button[aria-pressed=true]{background:var(--leaf);color:#fff}
+.act button:disabled{color:#b3a595;cursor:not-allowed}
+.empty{grid-column:1/-1;text-align:center;padding:70px 20px;border:1px dashed #bfae97;border-radius:6px;color:var(--muted)}
+.empty h3{font-family:var(--serif);font-size:22px;color:var(--ink);margin:0 0 6px}
+.empty button{margin-top:16px}
+
+footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer button{background:none;border:0;color:var(--muted);text-decoration:underline;padding:0}
+
+/* ── 버튼/대화상자 ── */
+.btn{background:var(--espresso);color:var(--foam);border:1px solid var(--espresso);padding:10px 16px;border-radius:4px;font-weight:500}
+.btn.line{background:transparent;color:var(--ink);border-color:#a8967f}
+.btn.danger{background:transparent;color:var(--berry);border-color:var(--berry)}
+dialog{border:0;padding:0;background:var(--card);color:var(--ink);border-radius:8px;width:min(560px,calc(100vw - 24px));max-height:calc(100vh - 24px);box-shadow:0 20px 60px rgba(36,24,18,.35)}
+dialog::backdrop{background:rgba(36,24,18,.55)}
+dialog form,dialog .sheet{padding:24px}
+dialog h2{font-family:var(--serif);font-size:24px;margin:0 0 4px}
+dialog .sub{color:var(--muted);margin:0 0 18px;font-size:13.5px}
+.field{display:block;margin-bottom:16px}
+.field>span,.field>legend{display:block;font-weight:600;font-size:13.5px;margin-bottom:6px;padding:0}
+fieldset.field{border:0;padding:0;margin-inline:0}
+.field input[type=text],.field input[type=number],.field textarea{width:100%;background:#fff;border:1px solid var(--line);border-radius:4px;padding:10px 12px}
+.field input:focus,.field textarea:focus{border-color:var(--ink);outline:none}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.drop{display:flex;align-items:center;gap:14px;border:1.5px dashed #b9a892;border-radius:6px;padding:12px;background:var(--foam);cursor:pointer}
+.drop.over{border-color:var(--ink);background:#efe4d1}
+.drop img,.drop .ph{width:84px;height:84px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:4px;flex:none}
+.drop .ph{display:grid;place-items:center;color:var(--muted);font-size:26px}
+.drop small{color:var(--muted);display:block}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips label{cursor:pointer}
+.chips input{position:absolute;opacity:0;pointer-events:none}
+.chips span{display:inline-block;border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;font-size:13.5px}
+.chips input:checked+span{background:var(--espresso);border-color:var(--espresso);color:var(--foam)}
+.chips input:focus-visible+span{outline:2px solid var(--butter);outline-offset:2px}
+.grp{font-size:12px;color:var(--muted);margin:10px 0 6px;letter-spacing:.08em}
+.grp:first-of-type{margin-top:0}
+.btns{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:22px}
+.btns .danger{margin-right:auto}
+.err{color:var(--berry);font-size:13px;min-height:18px;margin:0}
+
+/* ── 주문서(영수증) ── */
+#tab{margin:0 0 0 auto;height:100vh;max-height:100vh;width:min(400px,100vw);border-radius:0;background:#fffdf8}
+#tab .sheet{display:flex;flex-direction:column;height:100%;font-family:var(--mono);font-size:13.5px}
+#tab h2{text-align:center;letter-spacing:.06em}
+#tab .sub{text-align:center;font-family:var(--sans)}
+.lines{flex:1;overflow:auto;border-top:1.5px dashed var(--ink);border-bottom:1.5px dashed var(--ink);padding:10px 0;margin:0;list-style:none}
+.lines li{display:flex;gap:8px;align-items:baseline;padding:6px 0}
+.lines li span:first-child{flex:1;font-family:var(--sans);font-size:14px}
+.lines li button{border:0;background:none;color:var(--berry);padding:0 2px;font-size:16px;line-height:1}
+.lines .none{justify-content:center;color:var(--muted);font-family:var(--sans);padding:40px 0}
+.total{display:flex;justify-content:space-between;font-size:18px;font-weight:600;padding:14px 0 4px}
+.contact{font-family:var(--sans);font-size:13px;color:var(--muted);margin:4px 0 0;white-space:pre-line;overflow-wrap:anywhere}
+
+#toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--espresso);color:var(--foam);padding:11px 18px;border-radius:4px;opacity:0;pointer-events:none;transition:.2s;z-index:99;max-width:calc(100vw - 32px)}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+[hidden]{display:none!important}
+
+@media (max-width:820px){
+  .wrap{padding:0 16px}
+  .sign .wrap{flex-direction:column;align-items:flex-start;padding-top:26px;padding-bottom:22px;min-height:0}
+  .sign::before{background:rgba(28,18,13,.8)}
+  .side{width:100%;justify-content:space-between;gap:14px}
+  .me{width:150px}
+  .layout{grid-template-columns:minmax(0,1fr);gap:14px;padding-top:14px}
+  .index{position:static;max-height:none;display:flex;align-items:center;gap:6px;overflow-x:auto;padding:2px 0 8px;margin:0 -16px;padding-inline:16px;scrollbar-width:none}
+  .index::-webkit-scrollbar{display:none}
+  .index h2{margin:0;padding:0;border:0;font-family:var(--sans);font-size:15px}
+  .index button,.index h2 button{width:auto;white-space:nowrap;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;margin:0;font-weight:500}
+  .index h2 button{border-color:var(--ink);font-weight:600}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .two{grid-template-columns:1fr}
+  .info{padding:10px 11px 8px}
+  .price{font-size:17px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<header class="sign">
+  <div class="wrap">
+    <div class="txt">
+      <div class="eyebrow">Item Menu · Open Daily</div>
+      <h1 id="shopName">카페#001</h1>
+      <p id="notice"></p>
+    </div>
+    <div class="side">
+      <button class="tab-btn" id="openTab" type="button">주문서 <b id="tabCount">0</b></button>
+      <figure class="me"><img src="character.gif" alt="카페#001 캐릭터" width="230" height="230"><figcaption>BARISTA</figcaption></figure>
+    </div>
+  </div>
+</header>
+
+<div class="owner" id="ownerBar" hidden>
+  <div class="wrap">
+    <strong>사장님 모드 · 변경 내용은 이 브라우저에 저장돼요</strong>
+    <button type="button" data-do="new">＋ 메뉴 등록</button>
+    <button type="button" data-do="settings">가게 설정</button>
+    <button type="button" data-do="export">사이트 파일 내보내기</button>
+    <button type="button" class="ghost" data-do="clearSamples" id="clearSamples" hidden>예시 지우기</button>
+    <button type="button" class="ghost" data-do="leave">나가기</button>
+  </div>
+</div>
+
+<div class="wrap layout">
+  <nav class="index" id="index" aria-label="카테고리"></nav>
+  <main>
+    <div class="tools">
+      <label class="search"><span aria-hidden="true">⌕</span><input id="q" type="search" placeholder="메뉴 이름으로 찾기" aria-label="메뉴 검색"></label>
+      <div class="seg" id="statusSeg" role="group" aria-label="판매 상태">
+        <button type="button" data-s="all" aria-pressed="true">전체</button>
+        <button type="button" data-s="on" aria-pressed="false">판매중</button>
+        <button type="button" data-s="out" aria-pressed="false">품절</button>
+      </div>
+      <select id="sort" aria-label="정렬">
+        <option value="new">최근 등록순</option>
+        <option value="low">가격 낮은순</option>
+        <option value="high">가격 높은순</option>
+        <option value="name">이름순</option>
+      </select>
+    </div>
+    <div class="count"><h2 id="viewTitle">전체 메뉴</h2><span id="viewCount"></span></div>
+    <div class="grid" id="grid"></div>
+  </main>
+</div>
+
+<footer><div class="wrap"><span id="footName">카페#001</span><button type="button" id="ownerToggle">사장님 모드</button></div></footer>
+
+<!-- 메뉴 등록 -->
+<dialog id="itemDlg">
+  <form id="itemForm" novalidate>
+    <h2 id="itemDlgTitle">메뉴 등록</h2>
+    <p class="sub">이름·이미지·가격을 넣고 카테고리 태그를 골라 주세요.</p>
+    <label class="field"><span>아이템 이름</span><input type="text" name="name" maxlength="60" autocomplete="off" required></label>
+    <div class="field"><span>이미지</span>
+      <label class="drop" id="drop">
+        <div class="ph" id="imgPh">＋</div><img id="imgPrev" alt="" hidden>
+        <div><b>이미지 선택</b><small>클릭하거나 파일을 끌어다 놓으세요. 붙여넣기(Ctrl/⌘+V)도 돼요.</small></div>
+        <input type="file" id="imgFile" accept="image/*" hidden>
+      </label>
+    </div>
+    <div class="two">
+      <label class="field"><span>가격 <small id="unitHint"></small></span><input type="number" name="price" min="0" step="any" inputmode="decimal" required></label>
+      <fieldset class="field"><legend>판매 상태</legend>
+        <div class="chips">
+          <label><input type="radio" name="status" value="on" checked><span>판매중</span></label>
+          <label><input type="radio" name="status" value="hold"><span>예약중</span></label>
+          <label><input type="radio" name="status" value="out"><span>품절</span></label>
+        </div>
+      </fieldset>
+    </div>
+    <fieldset class="field"><legend>카테고리 태그 <small style="font-weight:400;color:var(--muted)">(여러 개 선택 가능)</small></legend><div id="tagPick"></div></fieldset>
+    <label class="field"><span>한 줄 메모 <small style="font-weight:400;color:var(--muted)">(선택)</small></span><input type="text" name="note" maxlength="60" autocomplete="off" placeholder="예: 세트 구매 시 할인"></label>
+    <p class="err" id="itemErr" role="alert"></p>
+    <div class="btns">
+      <button type="button" class="btn danger" id="delItem" hidden>삭제</button>
+      <button type="button" class="btn line" data-close>취소</button>
+      <button type="submit" class="btn line" value="more" id="saveMore">저장하고 계속 등록</button>
+      <button type="submit" class="btn" value="save">저장</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- 가게 설정 -->
+<dialog id="setDlg">
+  <form id="setForm">
+    <h2>가게 설정</h2>
+    <p class="sub">간판과 주문서에 표시되는 내용이에요.</p>
+    <label class="field"><span>가게 이름</span><input type="text" name="shopName" maxlength="30"></label>
+    <label class="field"><span>공지 한마디</span><textarea name="notice" rows="2" maxlength="200"></textarea></label>
+    <label class="field"><span>가격 단위</span><input type="text" name="unit" maxlength="10" placeholder="예: 만원, 원, 다이아 (비워두면 숫자만 표시)"></label>
+    <label class="field"><span>주문 방법 안내</span><textarea name="contact" rows="2" maxlength="200" placeholder="예: 주문서를 복사해서 오픈채팅으로 보내 주세요"></textarea></label>
+    <label class="field"><span>주문 받을 오픈채팅 링크</span><input type="text" name="chatUrl" maxlength="200" inputmode="url" placeholder="https://open.kakao.com/o/..."></label>
+    <div class="btns"><button type="button" class="btn line" data-close>취소</button><button type="submit" class="btn">저장</button></div>
+  </form>
+</dialog>
+
+<!-- 주문서 -->
+<dialog id="tab">
+  <div class="sheet">
+    <h2>주문서</h2>
+    <p class="sub">담은 메뉴를 복사해서 오픈채팅으로 보내 주세요.</p>
+    <ul class="lines" id="lines"></ul>
+    <div class="total"><span>합계</span><span id="total">0</span></div>
+    <p class="contact" id="contact"></p>
+    <div class="btns"><button type="button" class="btn line" data-close>닫기</button><button type="button" class="btn line" id="clearTab">비우기</button><button type="button" class="btn line" id="copyTab">복사만</button><button type="button" class="btn" id="orderTab">복사하고 오픈채팅으로 주문</button></div>
+  </div>
+</dialog>
+
+<div id="toast" role="status"></div>
+
+<script>
+const GROUPS = {
+  '의상': ['코스튬','머리','눈','입','머리장식','얼굴장식','핸드헬드','꼬리','등 장식','모자','데코','다리 장식','장식 고리','망토','배경','비자르','기타'],
+  '가구': ['3성','4성','5성'],
+};
+const TAG_GROUP = {}; for (const g in GROUPS) GROUPS[g].forEach(t => TAG_GROUP[t] = g);
+const tagLabel = t => TAG_GROUP[t] === '가구' ? '★'.repeat(parseInt(t)) + ' ' + t : t;
+const STATUS = {on:'판매중', hold:'예약중', out:'품절'};
+const DEFAULTS = {shopName:'카페#001', notice:'의상·가구 아이템 판매 중 · 주문은 오픈채팅으로 받아요', unit:'', contact:'주문서가 복사되면 오픈채팅방에 붙여넣어 보내 주세요.', chatUrl:'https://open.kakao.com/o/sgoic4nh'};
+const chatUrl = () => /^https?:\/\//i.test(S.settings.chatUrl || '') ? S.settings.chatUrl : '';
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = n => String(Math.round(Number(n) * 100) / 100);
+const CUP = `<svg class="cup" viewBox="0 0 64 64" fill="none" stroke="#7b6858" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 26h34v12a14 14 0 0 1-14 14h-6a14 14 0 0 1-14-14z"/><path d="M46 29h4a6 6 0 0 1 0 12h-5"/><path d="M22 18c0-4 4-4 4-8M32 18c0-4 4-4 4-8"/><path d="M8 57h42"/></svg>`;
+
+let S = {settings:{...DEFAULTS}, items:[]};
+let view = {type:'all'}, statusF = 'all', owner = false, isLocal = false;
+let order = []; try { order = JSON.parse(localStorage.getItem('cafe-order') || '[]'); } catch {}
+try { owner = localStorage.getItem('cafe-owner') === '1'; } catch {}
+
+/* ── 저장소 (IndexedDB) ── */
+let dbp;
+const db = () => dbp ??= new Promise((res, rej) => {
+  const r = indexedDB.open('cafe-shop', 1);
+  r.onupgradeneeded = () => { r.result.createObjectStore('items', {keyPath:'id'}); r.result.createObjectStore('meta'); };
+  r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+});
+const tx = async (stores, mode, fn) => { const d = await db(); return new Promise((res, rej) => { const t = d.transaction(stores, mode); let out; t.oncomplete = () => res(out); t.onerror = t.onabort = () => rej(t.error); out = fn(t); }); };
+const req = r => new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+async function persist(fn) {
+  try {
+    await tx(['items','meta'], 'readwrite', t => {
+      const is = t.objectStore('items'), ms = t.objectStore('meta');
+      if (!isLocal) S.items.forEach(i => is.put(i));   // 처음 수정할 때 공개 데이터를 통째로 가져옴
+      ms.put(S.settings, 'settings');
+      fn && fn(is);
+    });
+    isLocal = true;
+  } catch (e) { console.error(e); toast('저장에 실패했어요. 브라우저 저장 공간을 확인해 주세요.'); }
+}
+async function load() {
+  try {
+    const d = await db();
+    const t = d.transaction(['items','meta']);
+    const [settings, items] = await Promise.all([req(t.objectStore('meta').get('settings')), req(t.objectStore('items').getAll())]);
+    if (settings) { S = {settings:{...DEFAULTS, ...settings}, items}; isLocal = true; return; }
+  } catch (e) { console.warn(e); }
+  try {
+    const r = await fetch('items.json', {cache:'no-cache'});
+    if (r.ok) { const j = await r.json(); S = {settings:{...DEFAULTS, ...j.settings}, items: j.items || []}; }
+  } catch {}
+}
+
+/* ── 그리기 ── */
+function matches(i) {
+  if (view.type === 'group' && !i.tags.some(t => TAG_GROUP[t] === view.v)) return false;
+  if (view.type === 'tag' && !i.tags.includes(view.v)) return false;
+  if (statusF === 'on' && i.status === 'out') return false;
+  if (statusF === 'out' && i.status !== 'out') return false;
+  const q = $('#q').value.trim().toLowerCase();
+  return !q || i.name.toLowerCase().includes(q);
+}
+function renderIndex() {
+  const n = {}; let gs = {};
+  S.items.forEach(i => { i.tags.forEach(t => n[t] = (n[t] || 0) + 1); new Set(i.tags.map(t => TAG_GROUP[t])).forEach(g => gs[g] = (gs[g] || 0) + 1); });
+  const cur = (type, v) => view.type === type && view.v === v;
+  let h = `<button type="button" class="all" data-type="all" aria-current="${view.type === 'all'}">전체 메뉴<span>${S.items.length}</span></button>`;
+  for (const g in GROUPS) {
+    h += `<h2><button type="button" data-type="group" data-v="${g}" aria-current="${cur('group', g)}">${g}<span>${gs[g] || 0}</span></button></h2>`;
+    h += GROUPS[g].map(t => `<button type="button" data-type="tag" data-v="${t}" aria-current="${cur('tag', t)}">${tagLabel(t)}<span>${n[t] || 0}</span></button>`).join('');
+  }
+  $('#index').innerHTML = h;
+}
+function render() {
+  const s = S.settings;
+  $('#shopName').textContent = $('#footName').textContent = s.shopName || '카페#001';
+  document.title = (s.shopName || '카페#001') + ' · 메뉴판';
+  $('#notice').textContent = s.notice;
+  $('#ownerBar').hidden = !owner;
+  $('#ownerToggle').hidden = owner;
+  $('#clearSamples').hidden = !S.items.some(i => i.sample);
+  renderIndex();
+
+  const sort = $('#sort').value;
+  const list = S.items.filter(matches).sort((a, b) =>
+    sort === 'low' ? a.price - b.price : sort === 'high' ? b.price - a.price :
+    sort === 'name' ? a.name.localeCompare(b.name, 'ko') : b.created - a.created);
+  $('#viewTitle').textContent = view.type === 'all' ? '전체 메뉴' : view.type === 'group' ? view.v : (TAG_GROUP[view.v] + ' · ' + tagLabel(view.v));
+  $('#viewCount').textContent = list.length + '개';
+  const unit = s.unit ? `<small>${esc(s.unit)}</small>` : '';
+
+  $('#grid').innerHTML = list.length ? list.map(i => {
+    const inTab = order.includes(i.id), out = i.status === 'out';
+    return `<article class="card ${out ? 'out' : ''}" data-id="${i.id}">
+      <div class="pic">${i.img ? `<img src="${esc(i.img)}" alt="" loading="lazy">` : CUP}${i.status !== 'on' ? `<span class="stamp ${i.status}">${out ? 'SOLD OUT' : '예약중'}</span>` : ''}</div>
+      <div class="info">
+        <div class="cats">${i.tags.map(t => esc(tagLabel(t))).join(' · ')}</div>
+        <h3>${esc(i.name)}</h3>
+        ${i.note ? `<p class="note">${esc(i.note)}</p>` : ''}
+        <div class="pricerow"><span class="cats">${STATUS[i.status]}</span><i></i><span class="price">${fmt(i.price)}${unit}</span></div>
+      </div>
+      <div class="act">
+        <button type="button" data-act="add" aria-pressed="${inTab}" ${out ? 'disabled' : ''}>${out ? '품절' : inTab ? '✓ 담았어요' : '주문서에 담기'}</button>
+        ${owner ? '<button type="button" data-act="edit">수정</button>' : ''}
+      </div></article>`;
+  }).join('') : emptyHtml();
+  order = order.filter(id => S.items.some(i => i.id === id));
+  $('#tabCount').textContent = order.length;
+}
+function emptyHtml() {
+  if (!S.items.length) return `<div class="empty"><h3>메뉴를 준비하고 있어요</h3><p>${owner ? '첫 메뉴를 등록하거나, 예시로 모양을 먼저 확인해 보세요.' : '곧 새로운 아이템으로 찾아올게요.'}</p>${owner ? '<button class="btn" data-act="new">＋ 메뉴 등록</button> <button class="btn line" data-act="samples">예시 메뉴 채우기</button>' : ''}</div>`;
+  return `<div class="empty"><h3>해당하는 메뉴가 없어요</h3><p>다른 카테고리나 검색어로 찾아보세요.</p></div>`;
+}
+function toast(m) { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 2400); }
+const saveOrder = () => { try { localStorage.setItem('cafe-order', JSON.stringify(order)); } catch {} };
+
+/* ── 주문서 ── */
+function renderTab() {
+  const its = order.map(id => S.items.find(i => i.id === id)).filter(Boolean), u = S.settings.unit || '';
+  $('#lines').innerHTML = its.length ? its.map(i => `<li><span>${esc(i.name)}</span><span>${fmt(i.price)}${esc(u)}</span><button type="button" data-rm="${i.id}" aria-label="${esc(i.name)} 빼기">×</button></li>`).join('') : '<li class="none">아직 담은 메뉴가 없어요</li>';
+  $('#total').textContent = fmt(its.reduce((a, i) => a + i.price, 0)) + u;
+  $('#contact').textContent = S.settings.contact;
+  $('#copyTab').disabled = $('#orderTab').disabled = !its.length;
+  $('#orderTab').hidden = !chatUrl();
+  return its;
+}
+$('#openTab').onclick = () => { renderTab(); $('#tab').showModal(); };
+$('#lines').onclick = e => { const id = e.target.dataset.rm; if (!id) return; order = order.filter(x => x !== id); saveOrder(); renderTab(); render(); };
+$('#clearTab').onclick = () => { order = []; saveOrder(); renderTab(); render(); };
+async function copyOrder() {
+  const its = renderTab(), u = S.settings.unit || '';
+  const text = `[${S.settings.shopName} 주문서]\n` + its.map(i => `· ${i.name} — ${fmt(i.price)}${u}`).join('\n') + `\n합계 ${fmt(its.reduce((a, i) => a + i.price, 0))}${u} (${its.length}개)`;
+  try { await navigator.clipboard.writeText(text); }
+  catch { const ta = Object.assign(document.createElement('textarea'), {value:text}); $('#tab').append(ta); ta.select(); document.execCommand('copy'); ta.remove(); }
+}
+$('#copyTab').onclick = async () => { await copyOrder(); toast('주문서를 복사했어요'); };
+$('#orderTab').onclick = () => {
+  window.open(chatUrl(), '_blank', 'noopener');   // 팝업 차단을 피하려고 복사보다 먼저 엽니다
+  copyOrder().then(() => toast('주문서를 복사했어요. 오픈채팅방에 붙여넣어 주세요.'));
+};
+
+/* ── 목록 조작 ── */
+$('#index').onclick = e => { const b = e.target.closest('button'); if (!b) return; view = {type:b.dataset.type, v:b.dataset.v}; render(); };
+$('#statusSeg').onclick = e => { const b = e.target.closest('button'); if (!b) return; statusF = b.dataset.s; [...$('#statusSeg').children].forEach(x => x.setAttribute('aria-pressed', x === b)); render(); };
+$('#q').oninput = render; $('#sort').onchange = render;
+$('#grid').onclick = e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const act = b.dataset.act, id = b.closest('.card')?.dataset.id;
+  if (act === 'new') return openItem();
+  if (act === 'samples') return addSamples();
+  if (act === 'edit') return openItem(S.items.find(i => i.id === id));
+  if (act === 'add') { order = order.includes(id) ? order.filter(x => x !== id) : [...order, id]; saveOrder(); render(); }
+};
+document.addEventListener('click', e => { if (e.target.matches('[data-close]')) e.target.closest('dialog').close(); });
+document.querySelectorAll('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d) d.close(); }));
+
+/* ── 사장님 모드 ── */
+const setOwner = v => { owner = v; try { localStorage.setItem('cafe-owner', v ? '1' : '0'); } catch {} render(); };
+$('#ownerToggle').onclick = () => { setOwner(true); scrollTo(0, 0); };
+$('#ownerBar').onclick = e => {
+  const d = e.target.dataset.do; if (!d) return;
+  if (d === 'new') openItem();
+  if (d === 'leave') setOwner(false);
+  if (d === 'export') exportSite();
+  if (d === 'clearSamples') { const ids = S.items.filter(i => i.sample).map(i => i.id); S.items = S.items.filter(i => !i.sample); persist(s => ids.forEach(id => s.delete(id))).then(render); }
+  if (d === 'settings') { const f = $('#setForm'); for (const k in DEFAULTS) f[k].value = S.settings[k] ?? ''; $('#setDlg').showModal(); }
+};
+$('#setForm').onsubmit = async e => { e.preventDefault(); const f = e.target; for (const k in DEFAULTS) S.settings[k] = f[k].value.trim(); if (!S.settings.shopName) S.settings.shopName = '카페#001'; await persist(); $('#setDlg').close(); render(); toast('가게 설정을 저장했어요'); };
+
+/* ── 메뉴 등록/수정 ── */
+let editing = null, imgData = '';
+$('#tagPick').innerHTML = Object.entries(GROUPS).map(([g, ts]) => `<div class="grp">${g}</div><div class="chips">${ts.map(t => `<label><input type="checkbox" name="tags" value="${t}"><span>${tagLabel(t)}</span></label>`).join('')}</div>`).join('');
+function setImg(src) { imgData = src || ''; $('#imgPrev').hidden = !src; $('#imgPh').hidden = !!src; if (src) $('#imgPrev').src = src; }
+function openItem(item, keepTags) {
+  const f = $('#itemForm'); editing = item || null;
+  const tags = item ? item.tags : keepTags || [];
+  f.name.value = item?.name ?? ''; f.price.value = item?.price ?? ''; f.note.value = item?.note ?? '';
+  f.status.value = item?.status ?? 'on';
+  f.querySelectorAll('[name=tags]').forEach(c => c.checked = tags.includes(c.value));
+  setImg(item?.img); $('#imgFile').value = ''; $('#itemErr').textContent = '';
+  $('#itemDlgTitle').textContent = item ? '메뉴 수정' : '메뉴 등록';
+  $('#delItem').hidden = !item; $('#saveMore').hidden = !!item;
+  $('#unitHint').textContent = S.settings.unit ? `(${S.settings.unit})` : '';
+  if (!$('#itemDlg').open) $('#itemDlg').showModal();
+  f.name.focus();
+}
+async function readImage(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  try {
+    const bmp = await createImageBitmap(file), k = Math.min(1, 512 / Math.max(bmp.width, bmp.height));
+    const c = Object.assign(document.createElement('canvas'), {width:Math.round(bmp.width * k), height:Math.round(bmp.height * k)});
+    c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+    setImg(c.toDataURL('image/webp', 0.86));
+  } catch { $('#itemErr').textContent = '이 이미지는 읽을 수 없어요. 다른 파일을 골라 주세요.'; }
+}
+$('#imgFile').onchange = e => readImage(e.target.files[0]);
+const drop = $('#drop');
+['dragover','dragenter'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => readImage(e.dataTransfer.files[0]));
+$('#itemDlg').addEventListener('paste', e => { const f = [...e.clipboardData.files].find(f => f.type.startsWith('image/')); if (f) { e.preventDefault(); readImage(f); } });
+$('#itemForm').onsubmit = async e => {
+  e.preventDefault();
+  const f = e.target, name = f.name.value.trim(), price = parseFloat(f.price.value);
+  let tags = [...f.querySelectorAll('[name=tags]:checked')].map(c => c.value);
+  if (!name) return $('#itemErr').textContent = '아이템 이름을 입력해 주세요.';
+  if (!(price >= 0)) return $('#itemErr').textContent = '가격을 숫자로 입력해 주세요.';
+  if (!tags.length) return $('#itemErr').textContent = '카테고리 태그를 하나 이상 골라 주세요.';
+  const item = {id: editing?.id ?? 'm' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), created: editing?.created ?? Date.now(), name, price, tags, status: f.status.value, note: f.note.value.trim(), img: imgData};
+  if (editing) S.items[S.items.indexOf(editing)] = item; else S.items.push(item);
+  await persist(s => s.put(item));
+  render(); toast(`'${name}' ${editing ? '수정했어요' : '등록했어요'}`);
+  if (e.submitter?.value === 'more') openItem(null, tags); else $('#itemDlg').close();
+};
+$('#delItem').onclick = async () => {
+  if (!editing || !confirm(`'${editing.name}' 메뉴를 삭제할까요?`)) return;
+  const id = editing.id; S.items = S.items.filter(i => i.id !== id);
+  await persist(s => s.delete(id)); $('#itemDlg').close(); render(); toast('삭제했어요');
+};
+async function addSamples() {
+  const mk = c => 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path fill="${c}22" d="M12 26h34v12a14 14 0 0 1-14 14h-6a14 14 0 0 1-14-14z"/><path d="M46 29h4a6 6 0 0 1 0 12h-5M22 18c0-4 4-4 4-8M32 18c0-4 4-4 4-8M8 57h42"/></svg>`);
+  const rows = [['라떼 아트 코스튬',1.5,['코스튬'],'on','#8f2e44'],['시나몬 롤 머리',0.8,['머리'],'on','#b06a2c'],['카라멜 눈',0.6,['눈'],'on','#3f6b4f'],['바리스타 모자',1.2,['모자','머리장식'],'hold','#3a281e'],['원두 자루 핸드헬드',0.4,['핸드헬드'],'out','#7b6858'],['테라스 배경',2,['배경'],'on','#2f5d7a'],['원목 카운터',3.5,['5성'],'on','#8a5a2b'],['드립 스탠드',0.9,['3성'],'on','#5b4a8a']];
+  const items = rows.map(([name, price, tags, status, c], k) => ({id:'s' + k + Date.now().toString(36), created:Date.now() - k, name:'[예시] ' + name, price, tags, status, note:'', img:mk(c), sample:true}));
+  S.items.push(...items); await persist(s => items.forEach(i => s.put(i))); render();
+}
+
+/* ── 내보내기 (items.json + images/ 를 zip으로) ── */
+const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c; } return t; })();
+const crc32 = b => { let c = ~0; for (let i = 0; i < b.length; i++) c = CRC[(c ^ b[i]) & 255] ^ (c >>> 8); return ~c >>> 0; };
+function zip(files) {
+  const enc = new TextEncoder(), parts = [], cd = []; let off = 0;
+  const date = ((new Date().getFullYear() - 1980) << 9) | ((new Date().getMonth() + 1) << 5) | new Date().getDate();
+  for (const {name, data} of files) {
+    const nb = enc.encode(name), crc = crc32(data);
+    const h = new DataView(new ArrayBuffer(30));
+    h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(12, date, true);
+    h.setUint32(14, crc, true); h.setUint32(18, data.length, true); h.setUint32(22, data.length, true); h.setUint16(26, nb.length, true);
+    const c = new DataView(new ArrayBuffer(46));
+    c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint16(14, date, true);
+    c.setUint32(16, crc, true); c.setUint32(20, data.length, true); c.setUint32(24, data.length, true); c.setUint16(28, nb.length, true); c.setUint32(42, off, true);
+    parts.push(h.buffer, nb, data); cd.push(c.buffer, nb); off += 30 + nb.length + data.length;
+  }
+  const cdSize = cd.reduce((a, b) => a + b.byteLength, 0), e = new DataView(new ArrayBuffer(22));
+  e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true); e.setUint32(12, cdSize, true); e.setUint32(16, off, true);
+  return new Blob([...parts, ...cd, e.buffer], {type:'application/zip'});
+}
+async function exportSite() {
+  toast('파일을 준비하고 있어요…');
+  const files = [], out = [], EXT = {'image/webp':'webp','image/png':'png','image/jpeg':'jpg','image/svg+xml':'svg','image/gif':'gif'};
+  for (const i of S.items.filter(i => !i.sample)) {
+    let img = i.img;
+    if (img) try {
+      const blob = await (await fetch(img)).blob();
+      if (img.startsWith('data:')) img = `images/${i.id}.${EXT[blob.type] || 'png'}`;
+      files.push({name: img, data: new Uint8Array(await blob.arrayBuffer())});
+    } catch {}   // 이미 올라가 있는 이미지를 못 읽으면 경로만 유지
+    out.push({...i, img});
+  }
+  files.unshift({name:'items.json', data:new TextEncoder().encode(JSON.stringify({version:1, settings:S.settings, items:out}))});
+  const a = Object.assign(document.createElement('a'), {href:URL.createObjectURL(zip(files)), download:'cafe-shop-data.zip'});
+  a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  toast(`메뉴 ${out.length}개를 내보냈어요. 압축을 풀어 index.html 옆에 올려 주세요.`);
+}
+
+load().then(render);
+</script>
+</body>
+</html>
